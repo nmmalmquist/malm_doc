@@ -1,72 +1,46 @@
+"use client";
+
+import * as React from "react";
+import { ChevronDown, File, GalleryVerticalEnd } from "lucide-react";
+
+import { NavMain } from "@/components/nav-main";
+import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
+  SidebarRail,
 } from "@/components/ui/sidebar";
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { createGetPagesQuery } from "@/queries/getPagesQuery";
+import { useActivePagesStore } from "@/stores/activePageStore";
 
-const items = [
-  {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-  {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
-];
-
-export function AppSidebar() {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data } = useQuery(createGetPagesQuery());
+  const activePage = useActivePagesStore((state) => state.page);
   return (
-    <Sidebar>
+    <Sidebar {...props}>
       <SidebarHeader>
-        <div className="rounded-xl bg-primary text-white">MALMDoc</div>
+        <TeamSwitcher
+          teams={[
+            {
+              name: "Acme Inc",
+              logo: GalleryVerticalEnd,
+              plan: "Enterprise",
+            },
+          ]}
+        />
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Pages</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup />
+        <NavMain
+          items={data?.map((page) => ({
+            title: page.title,
+            url: "",
+            isActive: activePage?.id === page.id,
+          }))}
+        />
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarRail />
     </Sidebar>
   );
 }
