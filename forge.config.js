@@ -8,13 +8,28 @@ export default {
   rebuildConfig: {},
   makers: [
     {
-      name: "@electron-forge/maker-dmg", // For macOS (.dmg)
-      platforms: ["darwin"], // Explicitly specify macOS
+      name: "@electron-forge/maker-squirrel", // For Windows (.exe)
+      platforms: ["win32"],
       config: {},
     },
     {
-      name: "@electron-forge/maker-zip", // For macOS (.zip)
-      platforms: ["darwin"], // Explicitly specify macOS
+      name: "@electron-forge/maker-zip", // For macOS and Windows (.zip)
+      platforms: ["darwin", "win32"],
+      config: {},
+    },
+    {
+      name: "@electron-forge/maker-dmg", // For macOS (.dmg)
+      platforms: ["darwin"],
+      config: {},
+    },
+    {
+      name: "@electron-forge/maker-deb", // For Linux (.deb)
+      platforms: ["linux"],
+      config: {},
+    },
+    {
+      name: "@electron-forge/maker-rpm", // For Linux (.rpm)
+      platforms: ["linux"],
       config: {},
     },
   ],
