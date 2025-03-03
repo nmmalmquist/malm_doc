@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import { Plus, X, type LucideIcon } from "lucide-react";
 
 import {
   Collapsible,
@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/collapsible";
 import {
   SidebarGroup,
+  SidebarGroupAction,
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
@@ -25,21 +26,36 @@ export function NavMain({
   items,
 }: {
   items: {
+    id: string;
     title: string;
     url: string;
     icon?: LucideIcon;
     isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
   }[];
 }) {
-  const { data } = useQuery(createGetPagesQuery());
+  const { data, refetch } = useQuery(createGetPagesQuery());
   const setActivePage = useActivePagesStore((state) => state.setActivePage);
+  const addNewPage = async () => {
+    await electron.addPage();
+    refetch();
+  };
+  const deletePage = async (id: string) => {
+    console.log("delete page", id);
+    await electron.deletePage(id);
+    refetch();
+  };
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Pages</SidebarGroupLabel>
+      <SidebarGroupLabel>
+        Pages{" "}
+        <SidebarGroupAction
+          title="Add Project"
+          className="cursor-pointer"
+          onClick={addNewPage}
+        >
+          <Plus /> <span className="sr-only">Add Project</span>
+        </SidebarGroupAction>
+      </SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
@@ -53,9 +69,7 @@ export function NavMain({
                 <SidebarMenuButton
                   tooltip={item.title}
                   onClick={() => {
-                    const selected = data.find(
-                      (page) => page.title === item.title
-                    );
+                    const selected = data.find((page) => page.id === item.id);
                     if (selected) {
                       setActivePage(selected);
                     }
@@ -63,7 +77,10 @@ export function NavMain({
                 >
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
-                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  <X
+                    className="ml-auto transition-transform duration-200 hover:text-destructive cursor-pointer"
+                    onClick={() => deletePage(item.id)}
+                  />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent>

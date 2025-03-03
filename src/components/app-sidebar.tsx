@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ChevronDown, File, GalleryVerticalEnd } from "lucide-react";
+import { GalleryVerticalEnd } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { TeamSwitcher } from "@/components/team-switcher";
@@ -18,6 +18,7 @@ import { useActivePagesStore } from "@/stores/activePageStore";
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data } = useQuery(createGetPagesQuery());
   const activePage = useActivePagesStore((state) => state.page);
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -37,6 +38,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: page.title,
             url: "",
             isActive: activePage?.id === page.id,
+            id: page.id,
           }))}
         />
       </SidebarContent>
